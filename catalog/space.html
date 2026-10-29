@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>视频目录 · 亲测派</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f4f5f3;
+        --surface: #ffffff;
+        --surface-2: #eceee9;
+        --ink: #1c2321;
+        --ink-2: #4c5751;
+        --ink-3: #7d8882;
+        --line: #dde1da;
+        --accent: #c2410c;
+        --accent-ink: #9a3412;
+        --accent-soft: #fdf0e7;
+        --teal: #0f766e;
+        --teal-soft: #e6f4f1;
+        --gold: #a16207;
+        --gold-soft: #fbf3dd;
+        --blue: #1d4ed8;
+        --blue-soft: #e9effc;
+        --plum: #9d2449;
+        --plum-soft: #faeaf0;
+        --warn-bg: #fff7e8;
+        --warn-line: #ecd9ac;
+        --warn-ink: #7c5a10;
+        --shadow: 0 1px 2px rgba(28,35,33,.05), 0 6px 18px -10px rgba(28,35,33,.14);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #14181a;
+          --surface: #1d2224;
+          --surface-2: #262c2f;
+          --ink: #eceeed;
+          --ink-2: #b6beb9;
+          --ink-3: #8b9590;
+          --line: #333a3d;
+          --accent: #fb923c;
+          --accent-ink: #fdba74;
+          --accent-soft: #33241a;
+          --teal: #2dd4bf;
+          --teal-soft: #173231;
+          --gold: #facc15;
+          --gold-soft: #332d16;
+          --blue: #93c5fd;
+          --blue-soft: #1d2a44;
+          --plum: #f9a8c0;
+          --plum-soft: #38202a;
+          --warn-bg: #2e2716;
+          --warn-line: #57491f;
+          --warn-ink: #ecd28a;
+          --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px -10px rgba(0,0,0,.5);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 880px; margin: 0 auto; padding: 0 18px 72px; }
+
+      /* ---------- header ---------- */
+      header { padding: 44px 0 8px; }
+      .brand {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-size: 13px; font-weight: 700; letter-spacing: .14em;
+        color: var(--accent-ink);
+      }
+      .brand::before { content: ""; width: 22px; height: 3px; background: var(--accent); border-radius: 2px; }
+      h1 {
+        font-family: "Noto Serif SC", "Songti SC", serif;
+        font-size: clamp(34px, 7vw, 52px);
+        font-weight: 900; line-height: 1.18; margin: 14px 0 10px;
+      }
+      .lede { color: var(--ink-2); font-size: 17px; margin: 0; max-width: 34em; }
+      .stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 4px; }
+      .stat {
+        background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+        padding: 10px 16px; box-shadow: var(--shadow);
+        display: flex; align-items: baseline; gap: 8px;
+      }
+      .stat b { font-size: 22px; font-weight: 900; line-height: 1; }
+      .stat span { font-size: 13px; color: var(--ink-2); }
+
+      .notice {
+        margin-top: 18px; background: var(--warn-bg); border: 1px solid var(--warn-line);
+        border-radius: 10px; padding: 12px 16px; color: var(--warn-ink); font-size: 14.5px;
+      }
+      .notice b { font-weight: 700; }
+
+      /* ---------- toolbar ---------- */
+      .toolbar {
+        position: sticky; top: 0; z-index: 20;
+        background: color-mix(in srgb, var(--bg) 88%, transparent);
+        backdrop-filter: blur(8px);
+        margin: 26px -18px 0; padding: 12px 18px 10px;
+        border-bottom: 1px solid var(--line);
+      }
+      .search {
+        display: flex; align-items: center; gap: 10px;
+        background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+        padding: 0 14px; box-shadow: var(--shadow);
+      }
+      .search svg { flex: none; color: var(--ink-3); }
+      .search input {
+        border: 0; outline: 0; background: transparent; color: var(--ink);
+        font: inherit; font-size: 15.5px; width: 100%; padding: 11px 0;
+      }
+      .search input::placeholder { color: var(--ink-3); }
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; padding-bottom: 2px; }
+      .chip {
+        flex: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 500;
+        border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+        border-radius: 999px; padding: 6px 14px;
+      }
+      .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 700; }
+      .chip:focus-visible, .search:focus-within, a.watch:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+      /* ---------- sections ---------- */
+      section { margin-top: 40px; scroll-margin-top: 128px; }
+      .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+      .sec-head h2 {
+        font-family: "Noto Serif SC", "Songti SC", serif;
+        font-size: 26px; font-weight: 900; margin: 0;
+      }
+      .sec-head .count { font-size: 13.5px; color: var(--ink-3); font-weight: 500; }
+      .sec-desc { color: var(--ink-2); font-size: 14.5px; margin: 0 0 16px; }
+      .sec-note { font-size: 13px; color: var(--warn-ink); background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 8px; padding: 8px 12px; margin: 0 0 16px; }
+
+      .list { display: grid; gap: 10px; }
+      .item {
+        display: flex; align-items: center; gap: 14px;
+        background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+        padding: 14px 16px; box-shadow: var(--shadow);
+      }
+      .badge {
+        flex: none; min-width: 52px; text-align: center;
+        font-size: 12.5px; font-weight: 700; letter-spacing: .04em;
+        border-radius: 8px; padding: 6px 6px; line-height: 1.3;
+      }
+      .b-api  { background: var(--accent-soft); color: var(--accent-ink); }
+      .b-money{ background: var(--gold-soft);   color: var(--gold); }
+      .b-tech { background: var(--teal-soft);   color: var(--teal); }
+      .b-ex   { background: var(--blue-soft);   color: var(--blue); }
+      .b-read { background: var(--plum-soft);   color: var(--plum); }
+      .item-main { flex: 1; min-width: 0; }
+      .item-title { font-size: 16px; font-weight: 500; line-height: 1.5; }
+      .item-sub { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+      a.watch {
+        flex: none; display: inline-flex; align-items: center; gap: 6px;
+        background: var(--ink); color: var(--bg); text-decoration: none;
+        font-size: 14.5px; font-weight: 700; border-radius: 9px; padding: 9px 16px;
+        transition: transform .12s ease, opacity .12s ease;
+      }
+      a.watch:hover { opacity: .88; }
+      a.watch:active { transform: scale(.97); }
+      @media (prefers-reduced-motion: reduce) { a.watch { transition: none; } }
+
+      .hot {
+        display: inline-block; font-size: 11.5px; font-weight: 700; color: var(--accent-ink);
+        background: var(--accent-soft); border-radius: 5px; padding: 1px 7px; margin-left: 8px;
+        vertical-align: 2px; letter-spacing: .05em;
+      }
+
+      .empty {
+        display: none; text-align: center; color: var(--ink-3);
+        padding: 44px 16px; font-size: 15px;
+      }
+      .empty.show { display: block; }
+
+      footer {
+        margin-top: 56px; border-top: 1px solid var(--line); padding-top: 20px;
+        color: var(--ink-3); font-size: 13.5px; line-height: 1.8;
+      }
+      footer b { color: var(--ink-2); }
+
+      @media (max-width: 560px) {
+        header { padding-top: 30px; }
+        .item { flex-wrap: wrap; gap: 10px; padding: 13px 14px; }
+        .item-main { flex-basis: calc(100% - 66px); }
+        a.watch { width: 100%; justify-content: center; padding: 10px 16px; }
+        .toolbar { margin-left: -18px; margin-right: -18px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <span class="brand">亲测派 · 视频目录</span>
+        <h1>25 部视频，按类分好了</h1>
+        <p class="lede">免费 API 速报、指数基金钱课、科技与交易所教程、交易经典精读——全部实测后才讲。点任意一部的「观看」就能直接播。</p>
+        <div class="stats">
+          <div class="stat"><b>25</b><span>部视频</span></div>
+          <div class="stat"><b>5</b><span>个分类</span></div>
+          <div class="stat"><b>12</b><span>部免费API速报</span></div>
+          <div class="stat"><b>6</b><span>部钱课</span></div>
+        </div>
+        <p class="notice"><b>先说一声：</b>播放页（vids.st）打开后<strong>会弹广告</strong>，介意的话慎点；关掉广告后就是正片。钱课与精读内容只讲认知与方法，<strong>不构成投资建议</strong>。</p>
+      </header>
+
+      <div class="toolbar">
+        <label class="search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+          <input id="q" type="search" placeholder="搜标题：比如 QQQ、Cloudflare、免费API…" aria-label="搜索视频标题" />
+        </label>
+        <div class="chips" role="group" aria-label="按分类筛选">
+          <button class="chip" data-filter="all" aria-pressed="true">全部 25</button>
+          <button class="chip" data-filter="api" aria-pressed="false">免费API · 12</button>
+          <button class="chip" data-filter="money" aria-pressed="false">钱课 · 6</button>
+          <button class="chip" data-filter="tech" aria-pressed="false">科技教程 · 4</button>
+          <button class="chip" data-filter="ex" aria-pressed="false">交易所教程 · 2</button>
+          <button class="chip" data-filter="read" aria-pressed="false">精读 · 1</button>
+        </div>
+      </div>
+
+      <main id="catalog">
+        <!-- 免费API -->
+        
+      <section style="margin:28px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)">
+        <h2 style="margin:0 0 6px;font-size:20px">亲测派推广 · 注册领福利</h2>
+        <p style="margin:0 0 14px;color:var(--ink-2);font-size:14.5px">以下链接为亲测派推广链接，注册不会给你带来额外费用；投资有风险，注册前请自行了解规则。</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px">
+          <div style="border:1px solid var(--line);border-radius:10px;padding:14px"><b>Muse</b><br><span style="color:var(--ink-2);font-size:14px">注册免费，邀请码 0EEGLO 兑换 10 亿词元</span><br><a href="https://muse.ai/join" target="_blank" rel="noopener">去注册 →</a><br><a href="https://vids.st/v/191971" target="_blank" rel="noopener">注册介绍视频 →</a></div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:14px"><b>币安</b><br><span style="color:var(--ink-2);font-size:14px">新人活动最高 400 USDC</span><br><a href="https://www.bsmkweb.net/referral/earn-together/refer2earn-usdc/claim?hl=zh-CN&amp;ref=GRO_28502_NUPL5&amp;utm_source=referral_entrance" target="_blank" rel="noopener">去注册 →</a><br><a href="https://vids.st/v/191976" target="_blank" rel="noopener">注册介绍视频 →</a></div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:14px"><b>Bybit</b><br><span style="color:var(--ink-2);font-size:14px">邀请码 QPBVYJZ，新人奖励最高 $6,135</span><br><a href="https://www.bybitglobal.com/invite?ref=QPBVYJZ&amp;medium=referral&amp;utm_campaign=evergreen&amp;share_to=link" target="_blank" rel="noopener">去注册 →</a><br><a href="https://vids.st/v/191979" target="_blank" rel="noopener">注册介绍视频 →</a></div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:14px"><b>Wise</b><br><span style="color:var(--ink-2);font-size:14px">跨境汇款与多币种账户</span><br><a href="https://wise.com/invite/irhn/boqil2" target="_blank" rel="noopener">去注册 →</a></div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:14px"><b>Neverless</b><br><span style="color:var(--ink-2);font-size:14px">推荐码 cptech</span><br><a href="https://neverless.com/referral?code=cptech" target="_blank" rel="noopener">去注册 →</a></div>
+          <div style="border:1px solid var(--line);border-radius:10px;padding:14px"><b>iFAST</b><br><span style="color:var(--ink-2);font-size:14px">推荐链接注册</span><br><a href="https://www.ifastgb.com/tellafriend/boqil5097" target="_blank" rel="noopener">去注册 →</a></div>
+        </div>
+      </section>
+        <section data-cat="api" id="api">
+          <div class="sec-head"><h2>免费API</h2><span class="count">12 部 · 持续更新的速报系列</span></div>
+          <p class="sec-desc">哪家免费额度变了、哪家新厂商进场、哪家到期下线——每集都亲手注册实测后再报。</p>
+          <div class="list">
+            <article class="item" data-title="EP1 免费API盘点">
+              <span class="badge b-api">EP1</span>
+              <div class="item-main"><div class="item-title">免费API盘点</div><div class="item-sub">系列第一集</div></div>
+              <a class="watch" href="https://vids.st/v/191968" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP2 免费大模型API 10月更新 8家收缩下线 9家新厂商补位 亲测避坑">
+              <span class="badge b-api">EP2</span>
+              <div class="item-main"><div class="item-title">免费大模型API·10月更新：8家收缩下线，9家新厂商补位，亲测避坑</div></div>
+              <a class="watch" href="https://vids.st/v/191986" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP3 新免费API速报 3家新厂商进场 LLM7砍额度 Gemini限流">
+              <span class="badge b-api">EP3</span>
+              <div class="item-main"><div class="item-title">新免费API速报：3家新厂商进场，LLM7砍额度、Gemini限流</div><div class="item-sub">速报第 1 集</div></div>
+              <a class="watch" href="https://vids.st/v/192005" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP4 新免费API速报 下集 5家新厂商进场 Token Harbor LLMTR">
+              <span class="badge b-api">EP4</span>
+              <div class="item-main"><div class="item-title">新免费API速报·下集：5家新厂商进场，Token Harbor $0免费、LLMTR今日到期</div></div>
+              <a class="watch" href="https://vids.st/v/192009" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP5 新免费API速报 第3集 xAI赠金 Step5权重开源 OpenRouter">
+              <span class="badge b-api">EP5</span>
+              <div class="item-main"><div class="item-title">新免费API速报·第3集：xAI赠金口径变了、Step5权重开源、OpenRouter又砍1个</div></div>
+              <a class="watch" href="https://vids.st/v/192012" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP6 新免费API速报 第4集 Nemotron Auray 10-31倒计时">
+              <span class="badge b-api">EP6</span>
+              <div class="item-main"><div class="item-title">新免费API速报·第4集：Nemotron 新贵免费上架，Auray 每月 50 点进场，10-31 倒计时 14 天</div></div>
+              <a class="watch" href="https://vids.st/v/192013" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP8 新免费API速报 第5集 两家新厂商进场 Beam揭面 倒计时">
+              <span class="badge b-api">EP8</span>
+              <div class="item-main"><div class="item-title">新免费API速报·第5集：两家新厂商进场，Beam 揭面，10-31 倒计时 12 天</div></div>
+              <a class="watch" href="https://vids.st/v/192021" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP11 新免费API速报 第6集 3个免费模型今日退役 Beam只剩2天 倒计时">
+              <span class="badge b-api">EP11</span>
+              <div class="item-main"><div class="item-title">新免费API速报·第6集：3个免费模型今日退役，Beam只剩2天，10-31倒计时10天</div></div>
+              <a class="watch" href="https://vids.st/v/192024" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP13 新免费API速报 第7集 Beam按计划退役 OpenRouter 倒计时">
+              <span class="badge b-api">EP13</span>
+              <div class="item-main"><div class="item-title">新免费API速报·第7集：Beam 按计划退役，OpenRouter 又砍 1 个，10-31 倒计时 8 天</div></div>
+              <a class="watch" href="https://vids.st/v/192026" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP15 新免费API速报 第8集 WorkBuddy今日到期 minimax免费延到11-02 倒计时">
+              <span class="badge b-api">EP15</span>
+              <div class="item-main"><div class="item-title">新免费API速报·第8集：WorkBuddy 今日到期、minimax 免费延到 11-02、10-31 倒计时 6 天</div></div>
+              <a class="watch" href="https://vids.st/v/192028" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP17 新免费API速报 第9集 两项到期 倒计时 Mistral更正">
+              <span class="badge b-api">EP17</span>
+              <div class="item-main"><div class="item-title">新免费API速报·第9集：两项到期、10-31倒计时4天、Mistral更正不是发布日</div></div>
+              <a class="watch" href="https://vids.st/v/192030" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP20 新免费API速报 第10集 倒计时 OpenRouter免费剩16个 Mistral权重仍未上架">
+              <span class="badge b-api">EP20</span>
+              <div class="item-main"><div class="item-title">新免费API速报·第10集：10-31倒计时2天、OpenRouter免费剩16个、Mistral权重仍未上架</div></div>
+              <a class="watch" href="https://vids.st/v/192033" target="_blank" rel="noopener">观看 →</a>
+            </article>
+          </div>
+        </section>
+
+        <!-- 钱课 -->
+        <section data-cat="money" id="money">
+          <div class="sec-head"><h2>钱课</h2><span class="count">6 部 · 指数基金系列</span></div>
+          <p class="sec-desc">从 VOO 是什么讲起，到费率、定投和新手避坑——用真实数字算，不喊单、不预测涨跌。</p>
+          <p class="sec-note">本系列为投资认知科普，不构成投资建议；指数过往表现不预示未来。</p>
+          <div class="list">
+            <article class="item" data-title="EP7 VOO 一集讲透 标普500指数基金 钱课1">
+              <span class="badge b-money">钱课#1</span>
+              <div class="item-main"><div class="item-title">VOO 一集讲透：标普500指数基金到底是什么？</div></div>
+              <a class="watch" href="https://vids.st/v/192020" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP9 QQQI 月分红 covered call 钱课2">
+              <span class="badge b-money">钱课#2</span>
+              <div class="item-main"><div class="item-title">QQQI 月分红的钱从哪来？covered call 图解</div></div>
+              <a class="watch" href="https://vids.st/v/192023" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP12 VOO vs QQQ vs QQQI 费率 分红 总回报 钱课3">
+              <span class="badge b-money">钱课#3</span>
+              <div class="item-main"><div class="item-title">VOO vs QQQ vs QQQI：费率、分红、总回报一次看懂</div></div>
+              <a class="watch" href="https://vids.st/v/192025" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP14 费率 0.03% vs 0.68% 复利 钱课4">
+              <span class="badge b-money">钱课#4</span>
+              <div class="item-main"><div class="item-title">费率 0.03% vs 0.68%：每年差多少钱？复利算给你看</div></div>
+              <a class="watch" href="https://vids.st/v/192027" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP16 ETF新手5个常见坑 钱课5">
+              <span class="badge b-money">钱课#5</span>
+              <div class="item-main"><div class="item-title">ETF新手5个常见坑</div></div>
+              <a class="watch" href="https://vids.st/v/192029" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP19 每年2万定投10年 QQQ 3.06倍 沪深300 恒生 指数 钱课6">
+              <span class="badge b-money">钱课#6</span>
+              <div class="item-main"><div class="item-title">每年2万定投10年：QQQ 3.06倍、沪深300 1.20倍、恒生 1.11倍——选什么指数比坚持多久更重要</div></div>
+              <a class="watch" href="https://vids.st/v/192032" target="_blank" rel="noopener">观看 →</a>
+            </article>
+          </div>
+        </section>
+
+        <!-- 科技教程 -->
+        <section data-cat="tech" id="tech">
+          <div class="sec-head"><h2>科技教程</h2><span class="count">4 部 · 上手实测与解说</span></div>
+          <p class="sec-desc">免费额度怎么用、工具怎么落地——每一步都跟着做得出来。</p>
+          <div class="list">
+            <article class="item" data-title="EP10 Cloudflare Workers AI 每天免费 10000 Neurons 跑大模型 全流程实测">
+              <span class="badge b-tech">EP10</span>
+              <div class="item-main"><div class="item-title">Cloudflare Workers AI 上手：每天免费 10,000 Neurons 跑大模型，全流程实测<span class="hot">先看这部</span></div><div class="item-sub">7 分 51 秒 · 额度换算＋三步上手</div></div>
+              <a class="watch" href="https://vids.st/v/191930" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="EP18 不用AI生图 Python PIL 教程图排版 四层版式">
+              <span class="badge b-tech">EP18</span>
+              <div class="item-main"><div class="item-title">不用 AI 生图，用 Python PIL 给教程图排版：四层版式一次讲清</div></div>
+              <a class="watch" href="https://vids.st/v/192031" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="Muse 注册保姆级教程 10亿 Tokens 邀请码兑换">
+              <span class="badge b-tech">教程</span>
+              <div class="item-main"><div class="item-title">Muse 注册保姆级教程：10亿 Tokens 白拿，邀请码兑换全攻略</div></div>
+              <a class="watch" href="https://vids.st/v/191971" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="解说MKBHD iPhone 18 Pro评测 5个关键点 验证 二创">
+              <span class="badge b-tech">二创</span>
+              <div class="item-main"><div class="item-title">解说MKBHD：iPhone 18 Pro评测，5个关键点我验证了一遍</div></div>
+              <a class="watch" href="https://vids.st/v/191983" target="_blank" rel="noopener">观看 →</a>
+            </article>
+          </div>
+        </section>
+
+        <!-- 交易所教程 -->
+        <section data-cat="ex" id="ex">
+          <div class="sec-head"><h2>交易所教程</h2><span class="count">2 部 · 注册上手</span></div>
+          <p class="sec-desc">从注册到完成新手任务，一步步手把手演示。</p>
+          <div class="list">
+            <article class="item" data-title="币安注册保姆级教程 新人最高拿400 USDC Binance">
+              <span class="badge b-ex">币安</span>
+              <div class="item-main"><div class="item-title">币安注册保姆级教程：新人最高拿400 USDC，手把手演示</div></div>
+              <a class="watch" href="https://vids.st/v/191976" target="_blank" rel="noopener">观看 →</a>
+            </article>
+            <article class="item" data-title="Bybit 注册保姆级教程 新人最高拿 6135">
+              <span class="badge b-ex">Bybit</span>
+              <div class="item-main"><div class="item-title">Bybit 注册保姆级教程：新人最高拿 $6,135，手把手演示</div></div>
+              <a class="watch" href="https://vids.st/v/191979" target="_blank" rel="noopener">观看 →</a>
+            </article>
+          </div>
+        </section>
+
+        <!-- 精读 -->
+        <section data-cat="read" id="read">
+          <div class="sec-head"><h2>精读</h2><span class="count">1 部 · 交易经典精读系列</span></div>
+          <p class="sec-desc">每期只讲透一本书的一个主观点。定位是书评与认知科普，不讲具体标的、不喊单、不预测价格。</p>
+          <p class="sec-note">本系列不构成投资建议。</p>
+          <div class="list">
+            <article class="item" data-title="精读01 懂技术还亏钱 问题不在技术 交易心理分析 马克·道格拉斯">
+              <span class="badge b-read">精读 1/5</span>
+              <div class="item-main"><div class="item-title">懂技术还亏钱，问题不在技术｜《交易心理分析》精读 1/5</div><div class="item-sub">马克·道格拉斯《交易心理分析》</div></div>
+              <a class="watch" href="https://vids.st/v/192034" target="_blank" rel="noopener">观看 →</a>
+            </article>
+          </div>
+        </section>
+
+        <p class="empty" id="empty">没有匹配的标题，换个关键词试试。</p>
+      </main>
+
+      <footer>
+        <b>亲测派</b> · 所有视频均为亲自实测后制作。<br />
+        播放由 vids.st 提供，打开播放页会弹广告，介意慎点。钱课与精读内容不构成投资建议。
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        var q = document.getElementById('q');
+        var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+        var sections = Array.prototype.slice.call(document.querySelectorAll('section[data-cat]'));
+        var empty = document.getElementById('empty');
+        var activeCat = 'all';
+
+        function apply() {
+          var kw = q.value.trim().toLowerCase();
+          var anyVisible = false;
+          sections.forEach(function (sec) {
+            var catOk = activeCat === 'all' || sec.getAttribute('data-cat') === activeCat;
+            var secVisible = false;
+            sec.querySelectorAll('.item').forEach(function (item) {
+              var hit = catOk && (!kw || item.getAttribute('data-title').toLowerCase().indexOf(kw) !== -1);
+              item.style.display = hit ? '' : 'none';
+              if (hit) secVisible = true;
+            });
+            sec.style.display = secVisible ? '' : 'none';
+            if (secVisible) anyVisible = true;
+          });
+          empty.classList.toggle('show', !anyVisible);
+        }
+
+        chips.forEach(function (chip) {
+          chip.addEventListener('click', function () {
+            activeCat = chip.getAttribute('data-filter');
+            chips.forEach(function (c) { c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
+            apply();
+          });
+        });
+        q.addEventListener('input', apply);
+      })();
+    </script>
+  </body>
+</html>
