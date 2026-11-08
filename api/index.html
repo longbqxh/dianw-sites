@@ -145,16 +145,6 @@ h1{background-size:200% 100%;animation:shimmer 6s linear infinite}
 </div>
 
 <div class="wrap">
-  <!-- 推广位 -->
-  <div class="featured" id="featured">
-    <h2>Muse<span class="tag-gold">限时推广</span></h2>
-    <p>注册免费，用邀请码兑换 <b style="color:var(--gold)">10 亿 Muse 词元</b>，足够个人开发者用很久。</p>
-    <div class="code">邀请码 <b>0EEGLO</b>：加入后 48 小时内在设置里兑换，双方各得 10 亿词元</div>
-    <br>
-    <a class="btn" href="https://muse.ai/join" target="_blank" rel="noopener">去注册领取 →</a> <a class="btn" href="https://vids.st/v/191971" target="_blank" rel="noopener">注册介绍视频 →</a>
-  </div>
-
-  
   <div class="sec"><h2>💰 亲测派推广 · 注册领福利</h2><div class="line"></div></div>
   <div class="grid">
     <div class="card"><div class="card-top"><h3>Wise</h3></div><div class="quota"><span class="k">简介：</span>跨境汇款与多币种账户</div><a class="go" href="https://wise.com/invite/irhn/boqil2" target="_blank" rel="noopener">去注册 →</a></div>
@@ -408,7 +398,6 @@ function render(){
     secs[c].style.display=show?"":"none";
     secs[c].querySelector(".count").textContent=counts[c]+" 家";
   });
-  document.getElementById("featured").style.display=(!q||"muse 邀请码".includes(q))?"":"none";
   document.getElementById("n-zero").textContent=VENDORS.filter(v=>v.c==="zero").length;
   document.getElementById("n-verify").textContent=VENDORS.filter(v=>v.c==="verify").length;
   document.getElementById("n-unv").textContent=VENDORS.filter(v=>v.c==="unv").length;
